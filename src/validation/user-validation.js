@@ -4,7 +4,8 @@ const registerUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
   password: Joi.string().max(100).required(),
   name: Joi.string().max(100).required(),
-}).options({ abortEarly: false, allowUnknown: false });
+  role: Joi.string().max(100).required(),
+});
 
 const loginUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
@@ -17,6 +18,7 @@ const updateUserValidation = Joi.object({
   username: Joi.string().max(100).required(),
   password: Joi.string().max(100).optional(),
   name: Joi.string().max(100).optional(),
+  role: Joi.string().max(100).required(),
 });
 
 export {
