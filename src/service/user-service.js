@@ -6,16 +6,16 @@ import {
   registerUserValidation,
   updateUserValidation,
 } from '../validation/user-validation.js';
-import { validate } from '../validation/validation.js';
+import { setUserCreate, setUserUpdate, validate } from '../validation/validation.js';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 
-const register = async (request) => {
-  const user = validate(registerUserValidation, request);
+const register = async (user, request) => {
+  const userRequest = validate(registerUserValidation, request);
 
   const countUser = await prismaClient.user.count({
     where: {
-      username: user.username,
+      username: userRequest.username,
     },
   });
 
@@ -23,12 +23,13 @@ const register = async (request) => {
     throw new ResponseError(400, 'Username already exists');
   }
 
-  user.password = await bcrypt.hash(user.password, 10);
+  userRequest.password = await bcrypt.hash(userRequest.password, 10);
+  const data = setUserCreate(user,userRequest);
   const result = await prismaClient.user.create({
-    data: user,
+    data: data,
     select: {
       username: true,
-      name: true,
+      full_name: true,
     },
   });
 
@@ -45,11 +46,16 @@ const login = async (request) => {
     select: {
       username: true,
       password: true,
+      token : true,
     },
   });
 
   if (!user) {
     throw new ResponseError(401, 'Username Or Password Wrong');
+  }
+  
+  if (user.token){
+    throw new ResponseError(401, 'you have logged in');
   }
 
   const isPasswordValid = await bcrypt.compare(
@@ -69,6 +75,7 @@ const login = async (request) => {
     },
     select: {
       token: true,
+      role_code : true,
     },
   });
   return updateToken;
@@ -83,7 +90,7 @@ const getUserbyUsername = async (username) => {
     },
     select: {
       username: true,
-      name: true,
+      full_name: true,
     },
   });
 
@@ -94,30 +101,37 @@ const getUserbyUsername = async (username) => {
   return user;
 };
 
-const update = async (request) => {
-  const user = validate(updateUserValidation, request);
-  const totalUserInDatabase = await prismaClient.user.count({
+const update = async (user, request) => {
+  const userRequest = validate(updateUserValidation, request);
+  const cekUserId = await prismaClient.user.findUnique({
     where: {
-      username: user.username,
+      user_id: userRequest.user_id,
     },
   });
 
-  if (totalUserInDatabase !== 1) {
+  if (!cekUserId) {
     throw new ResponseError(404, 'user not found');
   }
+  
+  const usernameAlreadyExist = await prismaClient.user.findUnique({
+    where: {
+      username: userRequest.username,
+    },
+  });
 
-  const data = {};
-  if (user.name) {
-    data.name = user.name;
+  if (usernameAlreadyExist && usernameAlreadyExist.username != cekUserId.username) {
+    throw new ResponseError(404, 'username already exist in database');
   }
 
-  if (user.password) {
-    data.password = await bcrypt.hash(user.password, 10);
+  const data = setUserUpdate(user, request);
+
+  if (userRequest.password) {
+    data.password = await bcrypt.hash(userRequest.password, 10);
   }
 
   return prismaClient.user.update({
     where: {
-      username: user.username,
+      user_id: userRequest.user_id,
     },
     data: data,
     select: {

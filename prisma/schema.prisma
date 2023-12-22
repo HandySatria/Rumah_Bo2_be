@@ -11,40 +11,140 @@ datasource db {
 }
 
 model User{
-  username String @id @db.VarChar(100)
+  user_id Int @id @default(autoincrement())
+  username String @db.VarChar(100) @unique
+  full_name String  @db.VarChar(150)
   password String @db.VarChar(100)
-  name String  @db.VarChar(100)
-  role String  @db.VarChar(100)
-  token String?  @db.VarChar(100)
-  contacts Contact[]
-
-  @@map("users")
+  token String?  @db.VarChar(150)
+  role_code String  @db.VarChar(100)
+  employee_id Int?
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+  @@map("user")
 }
 
-model Contact {
-  id Int @id @default(autoincrement())
-  first_name String @db.VarChar(100)
-  last_name String? @db.VarChar(100)
-  email String? @db.VarChar(200)
-  phone String? @db.VarChar(20)
-
-  username String @db.VarChar(100)
-  user User @relation(fields: [username], references: [username])
-
-  addresses Address[]
-  @@map("contacts")
+model ref_master{
+  ref_master_id Int @id @default(autoincrement())
+  master_type String @db.VarChar(100)
+  master_key String  @db.VarChar(100)
+  master_value String @db.VarChar(100)
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+  @@map("ref_master")
 }
 
-model Address {
-  id Int @id @default(autoincrement())
-  street String? @db.VarChar(255)
-  city String? @db.VarChar(100)
-  province String? @db.VarChar(100)
-  country String @db.VarChar(100)
-  postal_code String? @db.VarChar(10)
-  contact_id Int
+model employee{
+  employee_id Int @id @default(autoincrement())
+  nik String @db.VarChar(30)
+  employee_name String @db.VarChar(150)
+  jabatan String  @db.VarChar(150)
+  posisi String? @db.VarChar(150)
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+  @@map("employee")
+}
 
-  contact Contact @relation(fields: [contact_id], references: [id])
+model ref_role{
+  ref_role_id Int @id @default(autoincrement())
+  role_code String @db.VarChar(100)
+  menu_code String  @db.VarChar(100)
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+  @@map("ref_role")
+}
 
-  @@map("addresses")
+model ref_menu{
+  ref_menu_id Int @id @default(autoincrement())
+  menu_code String @db.VarChar(100)
+  menu_name String  @db.VarChar(100)
+  is_active Boolean
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+  @@map("ref_menu")
+}
+
+model penduduk{
+  penduduk_id Int @id @default(autoincrement())
+  no_kk String? @db.VarChar(30)
+  nama String @db.VarChar(150)
+  nik String @db.VarChar(30) @unique
+  dusun String? @db.VarChar(100)
+  rw Int?
+  rt Int?
+  jenis_kelamin String? @db.VarChar(30)
+  tempat_lahir String? @db.VarChar(100)
+  tanggal_lahir DateTime?
+  agama String? @db.VarChar(100)
+  pendidikan String? @db.VarChar(100)
+  pekerjaan String? @db.VarChar(100)
+  golongan_darah String? @db.VarChar(10)
+  status_perkawinan String? @db.VarChar(100)
+  hubungan_keluarga String? @db.VarChar(100)
+  kewarganegaraan String? @db.VarChar(100)
+  no_paspor String? @db.VarChar(100)
+  no_kitas String? @db.VarChar(100)
+  nama_ayah String? @db.VarChar(150)
+  nama_ibu String? @db.VarChar(150)
+  status String? @db.VarChar(100)
+  tanggal_terbit_kk DateTime?
+  mutasi_code String? @db.VarChar(100)
+  tanggal_pindah DateTime
+  alamat_asal String? @db.VarChar(200)
+  alasan_pindah String? @db.VarChar(150)
+  is_penduduk Boolean?
+  is_penduduk_meninggal Boolean?
+  is_penduduk_pindah Boolean?
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+
+  penduduk_meninggal penduduk_meninggal?
+  penduduk_pindah penduduk_pindah?
+
+  @@map("penduduk")
+}
+
+model penduduk_meninggal{
+  penduduk_meninggal_id Int @id @default(autoincrement())
+  penduduk_id Int @unique
+  nik String @db.VarChar(30)
+  tanggal_meninggal DateTime?
+  umur_meninggal Int?
+  penyebab_meninggal String? @db.VarChar(150)
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+
+  penduduk penduduk @relation(fields: [penduduk_id], references: [penduduk_id])
+
+  @@map("penduduk_meninggal")
+}
+
+model penduduk_pindah{
+  penduduk_pindah_id Int @id @default(autoincrement())
+  penduduk_id Int @unique
+  nik String @db.VarChar(30)
+  tanggal_pindah DateTime?
+  alamat_pindah String? @db.VarChar(200)
+  penyebab_pindah String? @db.VarChar(150)
+  user_crt String? @db.VarChar(100)
+  user_upd String? @db.VarChar(100)
+  dtm_crt DateTime?
+  dtm_upd DateTime?
+
+  penduduk penduduk @relation(fields: [penduduk_id], references: [penduduk_id])
+
+  @@map("penduduk_pindah")
 }

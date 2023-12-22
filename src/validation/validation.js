@@ -9,4 +9,26 @@ const validate = (schema, request) => {
   }
 };
 
-export { validate };
+const setUserCreate = (user, request) =>{
+  const result = request
+  result.user_crt = user.username;
+  result.user_upd = user.username;
+
+  const currentDateTime = new Date();
+  const offset = currentDateTime.getTimezoneOffset();
+  result.dtm_crt = new Date(currentDateTime.getTime() - offset * 60000); // Menghilangkan offset GMT
+  result.dtm_upd = result.dtm_crt
+  return result;
+}
+
+const setUserUpdate = (user, request) =>{
+  const result = request;
+  result.user_upd = user.username;
+  
+  const currentDateTime = new Date();
+  const offset = currentDateTime.getTimezoneOffset();
+  result.dtm_upd = new Date(currentDateTime.getTime() - offset * 60000); // Menghilangkan offset GMT
+  return result;
+}
+
+export { validate, setUserCreate, setUserUpdate };
