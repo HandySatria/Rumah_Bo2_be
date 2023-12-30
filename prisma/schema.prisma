@@ -98,7 +98,7 @@ model penduduk{
   status String? @db.VarChar(100)
   tanggal_terbit_kk DateTime?
   mutasi_code String? @db.VarChar(100)
-  tanggal_pindah DateTime
+  tanggal_pindah DateTime?
   alamat_asal String? @db.VarChar(200)
   alasan_pindah String? @db.VarChar(150)
   is_penduduk Boolean?

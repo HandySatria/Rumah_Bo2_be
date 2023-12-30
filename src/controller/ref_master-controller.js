@@ -25,6 +25,18 @@ const GetRefMasterById = async (req, res, next) => {
   }
 };
 
+const GetRefMasterByMasterType = async (req, res, next) => {
+  try {
+    const master_type = req.body.master_type;
+    const result = await refMasterService.GetRefMasterByMasterType(master_type);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const UpdateRefMaster = async (req, res, next) => {
   try {
     const user = req.user;
@@ -60,4 +72,5 @@ export default {
   GetRefMasterById,
   UpdateRefMaster,
   DeleteRefMasterById,
+  GetRefMasterByMasterType
 };

@@ -12,6 +12,8 @@ const createRefMasterValidation = Joi.object({
 
 const getRefMasterValidation = Joi.number().min(1).positive().required();
 
+const mastrerTypeValidation = Joi.string().max(100).required();
+
 const updateRefMasterValidation = Joi.object({
   ref_master_id: Joi.number().min(1).positive().required(),
   master_type: Joi.string().max(100).required(),
@@ -27,4 +29,5 @@ export {
     createRefMasterValidation,
     getRefMasterValidation,
     updateRefMasterValidation,
+    mastrerTypeValidation
 };

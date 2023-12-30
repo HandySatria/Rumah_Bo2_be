@@ -1,6 +1,6 @@
 import { prismaClient } from '../application/database.js';
 import { ResponseError } from '../error/response-error.js';
-import { createRefMasterValidation, getRefMasterValidation, updateRefMasterValidation } from '../validation/ref_master-validation.js';
+import { createRefMasterValidation, getRefMasterValidation, mastrerTypeValidation, updateRefMasterValidation } from '../validation/ref_master-validation.js';
 import { setUserCreate, setUserUpdate, validate } from '../validation/validation.js';
 
 
@@ -40,6 +40,25 @@ const GetRefMasterById = async (id) => {
     }
 
     return RefMaster;
+};
+
+const GetRefMasterByMasterType = async (master_type) => {
+  master_type = validate(mastrerTypeValidation, master_type);
+
+  const RefMaster = await prismaClient.ref_master.findMany({
+  where: {
+      master_type: master_type,
+  },
+  select :{
+    master_key : true,
+    master_value : true
+  }
+  });
+  if (!RefMaster) {
+  throw new ResponseError(404, 'data is not found');
+  }
+
+  return RefMaster;
 };
 
 const GetAllRefMaster = async () => {
@@ -111,5 +130,6 @@ export default {
    GetRefMasterById,
    GetAllRefMaster,
    UpdateRefMaster,
-   DeleteRefMasterById
+   DeleteRefMasterById,
+   GetRefMasterByMasterType
 };

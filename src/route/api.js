@@ -40,11 +40,12 @@ userRouter.post('/pendudukmeninggal/DeletePendudukMeninggalById', pendudukMening
 userRouter.post('/pendudukpindah/CreatePendudukPindah', pendudukPindahController.CreatePendudukPindah);
 userRouter.post('/pendudukpindah/GetPendudukPindahById', pendudukPindahController.GetPendudukPindahById);
 userRouter.post('/pendudukpindah/UpdatePendudukPindah', pendudukPindahController.UpdatePendudukPindah);
-userRouter.post('/pendudukpindah/DeletePendudukPindahById', pendudukPindahController.DeletePendudukPindahById);
+userRouter.post('/pendudukpindah/DeletePendudukPindahById', pendudukPindahController.DeletePendudukPindahById);     
 
 // Ref Master APIs
 userRouter.post('/refmaster/CreateRefMaster', refMasterController.CreateRefMaster);
 userRouter.post('/refmaster/GetRefMasterById', refMasterController.GetRefMasterById);
+userRouter.post('/refmaster/GetRefMasterByMasterType', refMasterController.GetRefMasterByMasterType);
 userRouter.post('/refmaster/UpdateRefMaster', refMasterController.UpdateRefMaster);
 userRouter.post('/refmaster/DeleteRefMasterById', refMasterController.DeleteRefMasterById);
 

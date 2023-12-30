@@ -47,6 +47,7 @@ const login = async (request) => {
       username: true,
       password: true,
       token : true,
+      role_code : true
     },
   });
 
@@ -54,9 +55,9 @@ const login = async (request) => {
     throw new ResponseError(401, 'Username Or Password Wrong');
   }
   
-  if (user.token){
-    throw new ResponseError(401, 'you have logged in');
-  }
+  // if (user.token){
+  //   throw new ResponseError(401, 'you have logged in');
+  // }
 
   const isPasswordValid = await bcrypt.compare(
     loginRequest.password,
@@ -76,6 +77,7 @@ const login = async (request) => {
     select: {
       token: true,
       role_code : true,
+      username : true
     },
   });
   return updateToken;
